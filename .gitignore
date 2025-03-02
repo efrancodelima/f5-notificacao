@@ -24,4 +24,5 @@ target/
 hs_err_pid*
 replay_pid*
 
+s5-run-local.sh
 s9-anotacoes.txt

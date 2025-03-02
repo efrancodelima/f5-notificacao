@@ -15,12 +15,18 @@ spring:
     hibernate:
       ddl-auto: "update"
       dialect: "org.hibernate.dialect.MySQL8Dialect"
-  servlet:
-    multipart:
-      enabled: true
-      location: /tmp
-      max-file-size: 300MB
-      max-request-size: 300MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 
 pagamento:
   service:
