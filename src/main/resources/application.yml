@@ -16,7 +16,7 @@ spring:
       ddl-auto: "update"
       dialect: "org.hibernate.dialect.MySQL8Dialect"
 sendgrid:
-  api-key: ${API-KEY-SENDGRID}
+  api-key: ${API_KEY_SENDGRID}
   from-email: soat.fase5.hackaton@gmail.com
   from-name: Hackaton
 
