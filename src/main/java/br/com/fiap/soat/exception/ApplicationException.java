@@ -1,11 +1,10 @@
 package br.com.fiap.soat.exception;
 
-import br.com.fiap.soat.exception.messages.ApplicationMessage;
-
 public class ApplicationException extends Exception {
 
-  public ApplicationException(ApplicationMessage message) {
-    super(message.getMessage());
+  // Só tem uma mensagem para esse tipo de exceção
+  public ApplicationException() {
+    super("Ocorreu um erro ao enviar o e-mail.");
   }
 
   public ApplicationException(String message) {

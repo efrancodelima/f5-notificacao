@@ -16,20 +16,16 @@ public class SwaggerConfig {
   @Bean
   public OpenAPI customOpenApi() {
 
-    var tagProducao = new Tag().name("Producao")
-        .description("Operações relacionadas à produção");
-
-    var tagVideo = new Tag().name("Video")
-        .description("Operações relacionadas a vídeos");
+    var tagEmail = new Tag().name("E-mail")
+        .description("Operações relacionadas ao envio de e-mails.");
 
     return new OpenAPI()
         .info(new Info()
         .title("Documentação da API")
         .version("2.0")
-        .description("Documentação da API do microsservico de PRODUCAO"
-            + "<br>FIAP | Pós-tech | Software Architecture | Tech Challenge | Fase 4"))
-        .addTagsItem(tagProducao)
-        .addTagsItem(tagVideo);
+        .description("Documentação da API do microsservico de NOTIFICAÇÃO"
+            + "<br>FIAP | Pós-tech | Software Architecture | Hackaton | Fase 5"))
+        .addTagsItem(tagEmail);
   }
 
   @Bean

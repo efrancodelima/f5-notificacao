@@ -7,8 +7,4 @@ public class BadRequestException extends Exception {
   public BadRequestException(BadRequestMessage message) {
     super(message.getMessage());
   }
-
-  public BadRequestException(String message) {
-    super(message);
-  }
 }

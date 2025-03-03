@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.fiap.soat</groupId>
-    <artifactId>soat-fase-5</artifactId>
+    <artifactId>app-notificacao</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>Frames Capture</name>
-    <description>Captura frames de um vídeo a cada intervalo de tempo</description>
+    <name>Microsserviço de notificação</name>
+    <description>Responsável por enviar notificações</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -75,6 +75,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- Sendgrid: provedor de email -->
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>4.10.3</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
@@ -131,7 +142,7 @@
             <artifactId>lombok</artifactId>
             <version>${org.projectlombok.version}</version>
         </dependency>
-                <dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok-mapstruct-binding</artifactId>
             <version>${org.projectlombok.mapstruct.version}</version>
@@ -208,7 +219,7 @@
     </dependencies>
 
     <build>
-        <finalName>app-producao-v${project.version}</finalName>
+        <finalName>app-notificacao-v${project.version}</finalName>
         <plugins>
             <!-- spring-boot-maven-plugin -->
             <plugin>

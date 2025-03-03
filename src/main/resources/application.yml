@@ -3,7 +3,7 @@ server:
   port: 8080
 spring:
   application:
-    name: app-video
+    name: app-notificacao
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
@@ -15,16 +15,10 @@ spring:
     hibernate:
       ddl-auto: "update"
       dialect: "org.hibernate.dialect.MySQL8Dialect"
-  servlet:
-    multipart:
-      enabled: true
-      location: /tmp
-      max-file-size: 300MB
-      max-request-size: 300MB
-
-pagamento:
-  service:
-    url: ${URL_SERV_PAGAMENTO}
+sendgrid:
+  api-key: ${API_KEY_SENDGRID}
+  from-email: soat.fase5.hackaton@gmail.com
+  from-name: Hackaton
 
 # Profile para a AWS
 ---
