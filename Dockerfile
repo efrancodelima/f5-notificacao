@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 ## Copia a aplicação para o diretório de trabalho da imagem
-COPY target/app-producao-*.jar .
+COPY target/app-notificacao-*.jar .
 
 ## Script para inicializar a aplicação
 COPY s1-run-project.sh .

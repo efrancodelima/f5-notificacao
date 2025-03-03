@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.fiap.soat</groupId>
-    <artifactId>f5-notificacao</artifactId>
+    <artifactId>app-notificacao</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>Microsserviço de notificação</name>
@@ -219,7 +219,7 @@
     </dependencies>
 
     <build>
-        <finalName>app-producao-v${project.version}</finalName>
+        <finalName>app-notificacao-v${project.version}</finalName>
         <plugins>
             <!-- spring-boot-maven-plugin -->
             <plugin>

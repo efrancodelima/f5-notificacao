@@ -3,7 +3,7 @@ server:
   port: 8080
 spring:
   application:
-    name: app-video
+    name: app-notificacao
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
