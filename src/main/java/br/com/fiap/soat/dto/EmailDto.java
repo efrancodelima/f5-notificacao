@@ -10,17 +10,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmailDto {
 
-  @Schema(description = "E-mail do destinatário.", example = "efrancodelima@gmail.com.br")
-  private String destinatario;
+  @Schema(description = "E-mail do destinatário.", example = "email@email.com.br")
+  private String emailDestino;
 
-  @Schema(description = "Assunto do e-mail.", example = "Seu vídeo está pronto!")
+  @Schema(description = "O assunto do e-mail.", example = "Reunião na sexta-feira às 17h30")
   private String assunto;
 
-  @Schema(description = "Texto do email em html.", example = """
-      <p>Olá!</p>
-      <p>Seu vídeo terminou de processar e você já pode fazer o download das 
-      imagens capturadas em: htttp://um-link-qualquer</p>
-      """)
-  private String mensagem;
+  @Schema(description = "O texto do email.", example = "<!DOCTYPE html><html><body><p>"
+          + "Conforme conversamos, ficou agendada a reunião com a equipe para esta sexta-feira"
+          + "pré-carnaval às 17h30 para tratar sobre aquele assunto que podia ser um e-mail."
+          + "</p></body></html>")
+  private String texto;
 
+  
 }

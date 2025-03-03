@@ -1,7 +1,11 @@
 package br.com.fiap.soat.controller.contract;
 
 import br.com.fiap.soat.dto.EmailDto;
+import br.com.fiap.soat.exception.ApplicationException;
+import br.com.fiap.soat.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +21,16 @@ public interface Email {
           <br>Se houve sucesso, informa o link para baixar o arquivo.
           <br>Se houve falha, informa o motivo da falha.
           """)
+
+  @ApiResponses(value = {
+    @ApiResponse(
+      responseCode = "204",
+      description = "No Content")
+  })
   
   @PostMapping(value = "/enviar")
   
-  ResponseEntity<Object> enviarEmail(@RequestBody EmailDto dadosEmail);
+  ResponseEntity<Object> enviarEmail(@RequestBody EmailDto dadosEmail)
+      throws ApplicationException, BadRequestException;
 
 }

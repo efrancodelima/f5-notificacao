@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.fiap.soat</groupId>
-    <artifactId>soat-fase-5</artifactId>
+    <artifactId>f5-notificacao</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>Frames Capture</name>
-    <description>Captura frames de um vídeo a cada intervalo de tempo</description>
+    <name>Microsserviço de notificação</name>
+    <description>Responsável por enviar notificações</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
