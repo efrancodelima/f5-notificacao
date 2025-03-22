@@ -1,6 +1,5 @@
-package br.com.fiap.soat.controller.implementation;
+package br.com.fiap.soat.controller;
 
-import br.com.fiap.soat.controller.contract.Email;
 import br.com.fiap.soat.dto.EmailDto;
 import br.com.fiap.soat.exception.ApplicationException;
 import br.com.fiap.soat.exception.BadRequestException;
@@ -9,21 +8,23 @@ import br.com.fiap.soat.validator.EmailDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/email")
-public class EmailImpl implements Email {
+public class EmailController implements EmailContract {
 
   private final EmailService service;
 
   @Autowired
-  public EmailImpl(EmailService service) {
+  public EmailController(EmailService service) {
     this.service = service;
   }
 
   @Override
+  @PostMapping(value = "/enviar")
   public ResponseEntity<Object> enviarEmail(EmailDto dadosEmail)
       throws ApplicationException, BadRequestException {
     
