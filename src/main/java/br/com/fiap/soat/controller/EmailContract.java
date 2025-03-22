@@ -1,4 +1,4 @@
-package br.com.fiap.soat.controller.contract;
+package br.com.fiap.soat.controller;
 
 import br.com.fiap.soat.dto.EmailDto;
 import br.com.fiap.soat.exception.ApplicationException;
@@ -8,11 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "E-mail")
-public interface Email {
+public interface EmailContract {
 
   @Operation(
       summary = "Enviar e-mail",
@@ -27,8 +26,6 @@ public interface Email {
       responseCode = "204",
       description = "No Content")
   })
-  
-  @PostMapping(value = "/enviar")
   
   ResponseEntity<Object> enviarEmail(@RequestBody EmailDto dadosEmail)
       throws ApplicationException, BadRequestException;
