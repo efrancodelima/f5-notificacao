@@ -6,8 +6,4 @@ public class ApplicationException extends Exception {
   public ApplicationException() {
     super("Ocorreu um erro ao enviar o e-mail.");
   }
-
-  public ApplicationException(String message) {
-    super(message);
-  }
 }
