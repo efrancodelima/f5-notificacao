@@ -5,7 +5,6 @@ import br.com.fiap.soat.exception.ApplicationException;
 import br.com.fiap.soat.exception.BadRequestException;
 import br.com.fiap.soat.service.provider.EmailService;
 import br.com.fiap.soat.validator.EmailDtoValidator;
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +28,6 @@ public class EmailController implements EmailContract {
   public ResponseEntity<Object> enviarEmail(EmailDto dadosEmail)
       throws ApplicationException, BadRequestException {
 
-    System.out.println(
-        LocalDateTime.now().toString() 
-        + " - Requisição recebida: " 
-        + dadosEmail.toString());
-    
     EmailDtoValidator.validar(dadosEmail);
     service.enviarEmail(dadosEmail);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
