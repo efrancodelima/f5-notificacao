@@ -1,0 +1,9 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: app-notificacao
+sendgrid:
+  api-key: SENDGRID_API_KEY
+  from-email: SENDGRID_EMAIL
+  from-name: SENDGRID_NAME

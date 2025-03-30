@@ -30,7 +30,6 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class EmailControllerTest {
 

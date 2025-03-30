@@ -9,20 +9,16 @@ sendgrid:
   from-email: ${SENDGRID_EMAIL}
   from-name: ${SENDGRID_NAME}
 
+# Profile local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
 # Profile para a AWS
 ---
 spring:
   config:
     activate:
       on-profile: dev
-
-# Profile para testes
----
-spring:
-  config:
-    activate:
-      on-profile: test
-sendgrid:
-  api-key: SENDGRID_API_KEY
-  from-email: SENDGRID_EMAIL
-  from-name: SENDGRID_NAME

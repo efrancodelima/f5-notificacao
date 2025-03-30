@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import io.restassured.RestAssured;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 class HomeControllerTest {
 
   AutoCloseable closeable;
