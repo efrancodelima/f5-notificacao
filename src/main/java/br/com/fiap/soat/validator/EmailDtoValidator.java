@@ -6,7 +6,7 @@ import br.com.fiap.soat.exception.messages.BadRequestMessage;
 
 public class EmailDtoValidator {
 
-  public EmailDtoValidator() {}
+  private EmailDtoValidator() {}
 
   public static void validar(EmailDto dadosEmail) throws BadRequestException {
 

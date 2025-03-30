@@ -1,14 +1,14 @@
 package br.com.fiap.soat.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import br.com.fiap.soat.dto.EmailDto;
-import br.com.fiap.soat.exception.ApplicationException;
 import br.com.fiap.soat.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "E-mail")
 public interface EmailContract {
@@ -27,7 +27,6 @@ public interface EmailContract {
       description = "No Content")
   })
   
-  ResponseEntity<Object> enviarEmail(@RequestBody EmailDto dadosEmail)
-      throws ApplicationException, BadRequestException;
-
+  ResponseEntity<Object> enviarEmail(@RequestBody EmailDto dadosEmail) throws BadRequestException;
+  
 }

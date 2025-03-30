@@ -21,6 +21,4 @@ public class EmailDto {
           + "pré-carnaval às 17h30 para tratar sobre aquele assunto que podia ser um e-mail."
           + "</p></body></html>")
   private String texto;
-
-  
 }

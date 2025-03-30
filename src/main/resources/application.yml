@@ -22,3 +22,7 @@ spring:
   config:
     activate:
       on-profile: test
+sendgrid:
+  api-key: SENDGRID_API_KEY
+  from-email: SENDGRID_EMAIL
+  from-name: SENDGRID_NAME
