@@ -1,7 +1,13 @@
 package br.com.fiap.soat.service.provider;
 
-import br.com.fiap.soat.dto.EmailDto;
-import br.com.fiap.soat.exception.ApplicationException;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -9,15 +15,12 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
-import java.io.IOException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+
+import br.com.fiap.soat.dto.EmailDto;
+import br.com.fiap.soat.util.LoggerAplicacao;
 
 @Service
 public class EmailService {
-
-  @Value("${sendgrid.api-key}")
-  private String apiKey;
 
   @Value("${sendgrid.from-email}")
   private String fromEmail;
@@ -25,7 +28,15 @@ public class EmailService {
   @Value("${sendgrid.from-name}")
   private String fromName;
 
-  public void enviarEmail(EmailDto dadosEmail) throws ApplicationException {
+  private final SendGrid sendGrid;
+
+  @Autowired
+  public EmailService(SendGrid sendGrid) {
+    this.sendGrid = sendGrid;
+  }
+
+  @Async
+  public CompletableFuture<Void> enviarEmail(EmailDto dadosEmail) {
 
     Email remetente = new Email(fromEmail, fromName);
     Email destinatario = new Email(dadosEmail.getEmailDestino());
@@ -36,31 +47,31 @@ public class EmailService {
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
 
-    SendGrid sg = new SendGrid(apiKey);
-    Response response;
-
     try {
       request.setBody(email.build());
     } catch (IOException ex) {
-      throw new ApplicationException();
+      LoggerAplicacao.error("Erro ao construir a requisição do SendGrid.");
+      return CompletableFuture.completedFuture(null);
     }
 
+    Response response;
     try {
-      response = sg.api(request);
+      response = sendGrid.api(request);
     } catch (Exception e) {
-      throw new ApplicationException();
+      LoggerAplicacao.error("Erro na comunicação com o SendGrid.");
+      return CompletableFuture.completedFuture(null);
     }
 
     if (!responseOk(response)) {
-      throw new ApplicationException();
+      LoggerAplicacao.error("Erro ao enviar o e-mail (SendGrid falhou).");
+      LoggerAplicacao.error("StatusCode: " + response.getStatusCode());
+      LoggerAplicacao.error(response.getBody().toString());
     }
+
+    return CompletableFuture.completedFuture(null);
   }
 
   private boolean responseOk(Response response) {
-    if (response.getStatusCode() >= 200 && response.getStatusCode() <= 299) {
-      return true;
-    } else {
-      return false;
-    }
+    return response.getStatusCode() >= 200 && response.getStatusCode() <= 299;
   }
 }
