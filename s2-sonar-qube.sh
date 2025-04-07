@@ -1,6 +1,6 @@
 #!/bin/bash
 
-COMPONENT_KEY='efrancodelima_app-notificacao'
+COMPONENT_KEY='efrancodelima_f5-notificacao'
 
 get_first_sonar_metric() {
   local metric_key="$1"
