@@ -38,8 +38,7 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
           -Dsonar.projectKey=efrancodelima_app-notificacao
 
       - name: Verify analyze result
@@ -87,5 +86,5 @@ jobs:
         run: docker logout ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Deploy on Amazon ECS
-        run: aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_NAME }} \
-          --service ${{ secrets.AWS_SERVICE_NAME }} --force-new-deployment --region us-east-1
+        run: aws ecs update-service --cluster ${{ secrets.AWS_ECS_CLUSTER_NAME }} \
+          --service ${{ secrets.AWS_ECS_SERVICE_NAME }} --force-new-deployment --region us-east-1
