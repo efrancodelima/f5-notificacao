@@ -3,7 +3,7 @@ name: "Test, build, push, and deploy"
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   pipeline:
