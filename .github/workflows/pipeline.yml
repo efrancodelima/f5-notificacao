@@ -31,14 +31,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.csproj') }}
+          key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          -Dsonar.projectKey=efrancodelima_app-notificacao
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar \
+          -Dsonar.projectKey=efrancodelima_app-notificacao -X
 
       - name: Verify analyze result
         env:
