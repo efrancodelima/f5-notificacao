@@ -22,10 +22,6 @@ public class EmailDtoValidator {
   }
 
   private static boolean isNullOrBlank(String text) {
-    if (text == null || text.isBlank()) {
-      return true;
-    } else {
-      return false;
-    }
+    return text == null || text.isBlank();
   }
 }
