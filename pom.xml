@@ -6,7 +6,7 @@
 
     <groupId>br.com.fiap.soat</groupId>
     <artifactId>app-notificacao</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>Microsserviço de notificação</name>
     <description>Responsável por enviar notificações</description>
