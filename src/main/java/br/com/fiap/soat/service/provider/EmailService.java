@@ -65,7 +65,7 @@ public class EmailService {
     if (!responseOk(response)) {
       LoggerAplicacao.error("Erro ao enviar o e-mail (SendGrid falhou).");
       LoggerAplicacao.error("StatusCode: " + response.getStatusCode());
-      LoggerAplicacao.error(response.getBody().toString());
+      LoggerAplicacao.error(response.getBody());
     }
 
     return CompletableFuture.completedFuture(null);

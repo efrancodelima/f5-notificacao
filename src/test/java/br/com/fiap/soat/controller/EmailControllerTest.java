@@ -2,6 +2,7 @@ package br.com.fiap.soat.controller;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.IOException;
@@ -87,7 +88,7 @@ class EmailControllerTest {
     assertEquals(HttpStatus.BAD_REQUEST.value(), responseBody.getStatusCode());
     assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), responseBody.getError());
     assertEquals(BadRequestMessage.EMAIL_NULO.getMessage(), responseBody.getMessage());
-    assertEquals(responseBody.getTimestamp().isEmpty(), false);
+    assertFalse(responseBody.getTimestamp().isEmpty());
     assertEquals(endpoint, responseBody.getPath());
   }
 
