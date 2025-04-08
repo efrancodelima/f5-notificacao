@@ -169,6 +169,8 @@ A pipeline segue o padrão dos projetos anteriores: ela valida a qualidade do c�
 Links para o job completo da pipeline:
 - Microsserviço de vídeo: https://github.com/efrancodelima/f5-processamento/actions/runs/14322269037/job/40141338166
 - Microsserviço de notificação: https://github.com/efrancodelima/f5-notificacao/actions/runs/14320065155/job/40135129961
+- Lambda de sucesso: https://github.com/efrancodelima/f5-lambda-sucesso/actions/runs/14020601602/job/39252034654
+- Lambda de falha:  https://github.com/efrancodelima/f5-lambda-falha/actions/runs/14020589569/job/39252008176
 
 ## 3 Banco de dados
 
@@ -212,8 +214,8 @@ Abaixo segue o diagrama da arquitetura do sistema e, em seguida, uma breve expla
 ![Arquitetura do sistema](assets/arquitetura.png)
 
 A aplicação é dividida em dois microsserviços:
- - o microsserviço de vídeo, responsável por gerenciar o processamento do vídeo. Ele apenas gerencia o processamento, mas não processa nada (quem faz isso é o Media Convert);
- - e o microsserviço de notificação, responsável por notificar o usuário quando o vídeo termina de processar. Ele usa o SendGrid como provedor para envio de e-mails.
+- o microsserviço de vídeo, responsável por gerenciar o processamento do vídeo. Ele apenas gerencia o processamento, mas não processa nada (quem faz isso é o Media Convert);
+- e o microsserviço de notificação, responsável por notificar o usuário quando o vídeo termina de processar. Ele usa o SendGrid como provedor para envio de e-mails.
 
 A aplicação roda em uma rede privada, não sendo acessível pela internet sem passar pelo API Gateway. O API Gateway expõe apenas os endpoints que podem ser consumidos pelo cliente e oculta/bloqueia os webhooks que são usados pelas lambdas.
 
