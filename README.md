@@ -1,171 +1,153 @@
-# Tech Challenge - Fase 4
+# Tech Challenge - Fase 5
 
 Projeto realizado como atividade avaliativa do curso de **Software Architecture - Pós-Tech - FIAP**.
 
 Link do projeto no GitHub:
 
-- Microsserviço de PEDIDO: https://github.com/efrancodelima/pedido
-- Microsserviço de PAGAMENTO: https://github.com/efrancodelima/pagamento
-- Microsserviço de PRODUÇÃO: https://github.com/efrancodelima/producao
+- Microsserviço de vídeo: https://github.com/efrancodelima/f5-processamento
+- Microsserviço de notificação: https://github.com/efrancodelima/f5-notificacao
+- Lambda AWS de sucesso: https://github.com/efrancodelima/f5-lambda-sucesso
+- Lambda AWS de falha: https://github.com/efrancodelima/f5-lambda-falha
+- Projeto front-end: https://github.com/efrancodelima/f5-estatico
 
-Link do vídeo demonstrando o projeto em execução:
+Link do vídeo com a apresentação do projeto:
 
-- https://youtu.be/C-mozV9B57o (funcionamento da aplicação e processo de deploy)
-- https://youtu.be/ussy8n-Cozs (atualizações efetuadas na arquitetura)
+- PENDENTE
 
 # Índice
 
 - [Objetivos](#1-objetivos)
 - [Requisitos](#2-requisitos)
-  - [Arquitetura](#21-arquitetura)
-  - [Banco de dados](#22-banco-de-dados)
-  - [Testes](#23-testes)
-  - [Pipeline](#24-pipeline)
-  - [API Web](#25-api-web)
-- [Evidências dos testes](#3-evidências-dos-testes)
-- [Comentários sobre o projeto](#4-comentários-sobre-o-projeto)
-  - [Microsserviços](#41-microsserviços)
-  - [Banco de dados](#42-banco-de-dados)
-  - [Testes](#43-testes)
-  - [Pipeline](#44-pipeline)
-- [Instrução para rodar a aplicação](#5-instrução-para-rodar-a-aplicação)
+  - [Processamento assíncrono](#21-processamento-assíncrono)
+  - [Listagem dos vídeos](#22-listagem-dos-vídeos)
+  - [Autenticação](#23-autenticação)
+  - [Persistência dos dados](#24-persistência-dos-dados)
+  - [Notificações](#25-notificações)
+  - [Balanceamento de carga](#26-balanceamento-de-carga)
+  - [Escalabilidade](#27-escalabilidade)
+  - [Repositórios](#28-repositórios)
+  - [Qualidade do software](#29-qualidade-do-software)
+  - [Pipeline](#210-pipeline)
+- [Banco de dados](#3-banco-de-dados)
+  - [Modelo lógico](#31-modelo-lógico)
+  - [Script SQL](#32-script-sql)
+- [Arquitetura do sistema](#4-arquitetura-do-sistema)
 
 ## 1. Objetivos
 
-Desenvolver um sistema para uma lanchonete local em fase de expansão. O sistema deverá realizar o controle dos pedidos, além de outras funções correlatas, conforme especificado no Tech Challenge.
+Desenvolver uma aplicação capaz de processar imagens a partir de um vídeo, ou seja, capturar frames do vídeo em um intervalo regular de tempo. A aplicação deve utilizar os conceitos apresentados no curso, conforme especificado no Tech Challenge.
+
+Mais detalhes sobre o projeto serão mostrados na parte de requisitos.
 
 ## 2. Requisitos
 
-### 2.1. Arquitetura
+### 2.1 Processamento assíncrono
 
-O projeto da fase anterior, que utilizava a Clean Architecture, deverá ser migrado para a arquitetura de microsserviços.
+"A nova versão do sistema deve processar mais de um vídeo ao mesmo tempo."
 
-O projeto deverá conter, no mínimo, três microsserviços, que deverão se comunicar entre si.
+O microsserviço de processamento possui um endpoint para receber um ou mais vídeos.
 
-### 2.2. Banco de dados
+Colocamos um limite de 300 MB por upload, que pode ser alterado conforme a necessidade. O cliente pode escolher se deseja enviar vários vídeos em uma requisição só ou em requisições separadas, desde que respeite o limite de upload. Em qualquer caso, os vídeos serão processados simultaneamente, em diferentes threads.
 
-Cada microsserviço deverá ter seu próprio banco de dados.
+Se vier um vídeo por requisição e houver várias requisições simultâneas, o processamento dos vídeos também será simultâneo, pois esse já é o comportamento padrão de um microsserviço Java/Spring: cada requisição roda em uma thread separada.
 
-Um microsserviço não poderá acessar o banco de dados de outro microsserviço.
+Se vierem vários vídeos em uma requisição só, o sistema irá encaminhar cada vídeo para uma thread diferente, usando recursos de assincronismo.
 
-Deverá ser utilizado, pelo menos, um banco de dados SQL (relacional) e um NoSQL (não relacional).
+### 2.2 Listagem dos vídeos
 
-### 2.3. Testes
+"O fluxo deve ter uma listagem de status dos vídeos de um usuário."
 
-Os microsserviços deverão conter testes de unidade e, pelo menos, um caminho de teste deve implementar o BDD.
+Esse ponto criou uma certa dúvida se o fluxo citado no documento se referia ao uso de WebFlux ou SSE, mas em contato com os professores pelo Discord foi orientado que se tratava apenas de uma lista.
 
-Os testes deverão cobrir, no mínimo, 80% do código.
+Inicialmente, pensamos em criar um endpoint que atualizaria os status dos vídeos de tempos em tempos para o cliente (usando webflux). Mas depois achei melhor criar um endpoint simples que retorna a listagem e deixar nas mãos do cliente o controle sobre a consulta. No caso, o cliente pode ser uma aplicação front end e ela decide quando e em qual intervalo de tempo ela quer consultar a listagem. Ela decide se quer consultar apenas uma vez ou se prefere ir atualizando os status, ela decide quando parar, etc.
 
-Não foi pedido teste de integração (além do BDD, que geralmente inclui integração, embora não esteja limitado a isso).
+O front end não é necessário para a entrega do Tech Challenge, mas nós criamos um projeto bem simples em Angular, só para facilitar a apresentação da aplicação. Assim não será necessário ficar inserindo token de autenticação manualmente na requisição.
 
-### 2.4. Pipeline
+### 2.3 Autenticação
 
-Cada microsserviço deverá ter seu próprio repositório no GitHub.
+"O Sistema deve ser protegido por usuário e senha."
 
-As branchs main deverão estar protegidas de forma a não permitir commits diretos.
+FORMA DE AUTENTICAÇÃO
 
-Alterações na branch main só serão permitidas via pull request.
+Para poder usar o sistema, o usuário deve se autenticar usando sua conta Google.
+Sem se autenticar, o usuário não consegue enviar vídeos, listar os vídeos enviados e visualizar os status de cada um.
+Obviamente, uma vez autenticado, ele tem acesso apenas aos seus próprios vídeos.
 
-A pipeline deverá ser acionada sempre que a branch main for alterada.
+Por que escolhi usar a conta Google como forma de autenticação?
+Por dois motivos:
+- Usar uma conta já existente é mais prático e oferece uma experiência mais agradável ao usuário, que não vai precisar preencher um novo cadastro;
+- Hoje em dia a maioria dos usuários web possui uma conta Google (em 2024 o Google tinha mais de 2 bilhões de usuários ativos);
+- Poderia ter usado o Cognito, mas já usei ele no Tech Challenge da fase 3, então não agregaria nenhum aprendizado novo (embora também fosse uma boa solução).
 
-A pipeline deverá:
-- validar o build;
-- validar a qualidade do código via sonarqube ou outro serviço semelhante;
-- validar a cobertura de testes, sendo o coverage mínimo de 80%;
-- realizar o deploy na nuvem escolhida.
+GERADOR DE TOKEN
 
-### 2.5. API Web
+O token de autenticação é emitido usando o Firebase e tem prazo de validade de 1 hora (podendo ser renovado pela aplicação se o usuário continuar ativo).
 
-A seguir, seguem os requisitos quanto à API web definidos no Tech Challenge.
+Por que escolhi o Firebase para gerar o token?
+O firebase é uma ferramenta interessante porque oferece várias opções de login, permitindo expandir as opções de entrada do sistema no futuro. Exemplos de opções disponíveis: email e senha, número de telefone, Apple sign-in e provedores de identidade federados, tais como o Google, Facebook, Twitter, GitHub, entre outros.
 
-Não houve requisitos novos em relação à fase anterior, mas foi necessário criar alguns endpoints novos para permitir/facilitar a comunicação entre os microsserviços. Então, além dos endpoints mencionados abaixo, que são requisitos do projeto, teremos outros que serão demonstrados no vídeo do projeto.
+VALIDAÇÃO DO TOKEN NA APLICAÇÃO
 
-Cliente
+Os microsserviços da aplicação rodam na rede privada da AWS, não sendo diretamente acessíveis pela internet. Os endpoints que o usuário necessita acessar (video/upload e video/listar) são expostos por meio de um API Gateway.
 
-- Cadastrar cliente
-- Buscar cliente pelo CPF
+Esses endpoints possuem um filtro de autenticação. O filtro, na hora de validar o token JWT, considera não apenas o conteúdo do token, mas o emissor também (que é a nossa aplicação cadastrada no Firebase). Isso corrobora na segurança do sistema.
 
-Produto:
+### 2.4 Persistência dos dados
 
-- Criar, editar e remover produtos
-- Buscar produtos por categoria
+"O sistema deve persistir os dados."
 
-Pedido
+O sistema persiste os dados de uso do usuário e o arquivo zip gerado.
 
-- Fazer checkout
-- Deverá retornar a identificação do pedido
-- Atualizar o status do pedido
-- Consultar o status do pagamento
-- Listar pedidos nessa ordem: Pronto > Em Preparação > Recebido
-- Pedidos mais antigos primeiro e mais novos depois.
-- Pedidos finalizados não devem aparecer na lista.
+Com relação à parte multimídia, decidimos não persistir o vídeo em si, o que poderia impactar no custo de armazenamento. O vídeo é descartado após o processamento, apenas o resultado final, o arquivo zip para download é persistido.
 
-## 3. Evidências dos testes
+Com relação aos dados de utilização do usuário, persistimos:
+- nome e email do usuário;
+- nome do vídeo recebido;
+- timestamp do recebimento do vídeo;
+- status do vídeo;
+- timestamp da conclusão;
+- mensagem de erro, se houver;
+- link para download do arquivo zip.
 
-Abaixo segue a captura da tela do Sonar Cloud e também deixaremos os links para as pipelines com todos os steps concluídos com sucesso, incluindo os testes, cujos logs são impressos na pipeline.
+Isso tudo será detalhado melhor mais à frente na parte de banco de dados.
 
-![Tela do Sonar Cloud](assets/tela-sonar.png)
+### 2.5 Notificações
 
-Links:
-- Microsserviço de PEDIDO: https://github.com/efrancodelima/pedido/actions/runs/13273137930/job/37057026528
-- Microsserviço de PAGAMENTO: https://github.com/efrancodelima/pagamento/actions/runs/13272650996/job/37055483951
-- Microsserviço de PRODUÇÃO: https://github.com/efrancodelima/producao/actions/runs/13231048854/job/36928236519
+"Em caso de erro um usuário pode ser notificado (email ou um outro meio de comunicação)."
 
-## 4. Comentários sobre o projeto
+O microsserviço de notificação foi criado só para fazer isso.
 
-Todos os requisitos mencionados nesse documento são atendidos pelo projeto, mas deixaremos aqui alguns comentários sobre as partes que julgamos mais relevantes.
+Quando o usuário envia um vídeo para processar, ele recebe uma resposta 204 assim que o upload do vídeo é concluído. A aplicação não fica esperando o vídeo terminar de processar para depois responder o usuário (o que seria uma experiência bem ruim).
 
-### 4.1. Microsserviços
+Quando o vídeo termina de processar, um email é enviado para o usuário notificando a finalização com sucesso ou falha, conforme o caso. Se for sucesso, o link para download do arquivo zip contendo as imagens vai junto no e-mail. Se houver falha, o motivo da falha é informado no e-mail (pode ser um tipo de arquivo não compatível com o serviço, por exemplo).
 
-A aplicação é composta de três microsserviços: pedido, pagamento e produção.
+### 2.6 Balanceamento de carga
 
-Seguimos mais ou menos a forma de divisão sugerida no Tech Challenge, com pequenas modificações.
+"Em caso de picos o sistema não deve perder uma requisição."
 
-O microsserviço de pedido não é a visão do cliente e o microsserviço de produção não é a visão da cozinha.
+O sistema roda no Elastic Container Service, um orquestrador de containeres próprio da AWS, e possui um load balancer associado. Os services do ECS possuem um número mínimo e máximo de tasks, o que garante a escalabilidade do sistema. Naturalmente, esses números devem ser ajustados e redimensionados conforme a demanda da aplicação.
 
-Em vez de dividirmos os microsserviços por público alvo, preferimos dividi-los por domínios.
+Além disso, um ponto importante é que o processamento do vídeo é feito pelo Media Convert da AWS. Esse processamento demanda bastante CPU e memória, então terceirizamos essa tarefa para não sobrecarregar a aplicação. A aplicação ficou responsável apenas pelas tarefas mais simples: receber o vídeo, salvá-lo no bucket S3, criar o job no Media Convert, gerar o link presigned quando o processo terminar, entre outras coisas.
 
-Então, embora o microsserviço de produção atenda à cozinha, ele também pode atender o cliente, que deseja saber em que etapa de produção seu pedido está.
+### 2.7 Escalabilidade
 
-Da mesma forma, o microsserviço de pedido, embora atenda ao cliente, que precisa fazer o checkout, também atende à cozinha, que necessita saber o que cada pedido contém para poder produzir.
+"O sistema deve estar em uma arquitetura que o permita ser escalado."
 
-No divisão por domínios, poderíamos ter um microsserviço só para clientes, outro para produtos e assim por diante. Porém, preferimos adotar uma abordagem mais conservadora na migração do monolito: em vez de realizar uma mudança radical, separamos pequenas partes dele e transformamos em microsserviços.
+Ok, o sistema roda no Elastic Container Service e utiliza o banco de dados Aurora. Ambos pertencem ao ecossistema da AWS e ambos são escaláveis. No caso do banco de dados, a escalabilidade é automática, gerenciada pela própria AWS. No caso do ECS, podemos configurar o número mínimo e máximo de tasks, bem como as regras de escalabilidade.
 
-Sendo assim, o microsserviço de pedidos ainda concentra a parte das funcionalidades da aplicação anterior, exceto no que diz respeito ao pagamento e à esteira de produção (o histórico dos pedidos).
+### 2.8 Repositórios
 
-### 4.2. Banco de dados
+"O projeto deve ser versionado no Github."
 
-O microsserviço de pagamento utiliza o banco de dados MongoDB, que é orientado a documentos.
+Ok, os links para os repositórios se encontram no início deste documento. Os repositórios têm a branch main protegida e só aceitam merge por meio de pull request.
 
-Escolhi esse microsserviço para utilizar o banco não relacional, pois ele recebe notificações do mercado livre e, em algum momento futuro, o formato da notificação pode mudar ou a aplicação pode decidir alterar quais campos dessa notificação é importante guardar em seu banco de dados.
+### 2.9 Qualidade do software
 
-Nessa situação, o fato do MogoDB ter uma estrutura flexível em vez de um esquema rígido pode ser uma vantagem.
+"O projeto deve ter testes que garantam a sua qualidade."
 
-Os outros microsserviços (pedido e produção) utilizam banco de dados relacionais.
+Cada microsserviço possui cobertura de testes mínima de 80% e análise de issues/vulnerabilidades pelo Sonar.
 
-### 4.4. Testes
-
-Os testes de unidade sozinhos já atingem cobertura de código superior a 80%, tanto na cobertura de linhas de código quanto na cobertura de ramificações do código.
-
-Além deles, criamos 3 testes BDD no microsserviço de pedido, 2 no de pagamento e 2 no de produção (número superior ao mínimo, que era 1 em cada). Criamos um a mais no de pedido, pois é o microsserviço que contém mais funcionalidades, então pareceu razoável que ele tivesse mais testes também.
-
-### 4.4. Pipeline
-
-As mudanças em relação à fase anterior foram os testes e o Sonar.
-
-Os testes BDD necessitam da aplicação rodando para funcionar, então temos novos steps para:
-- iniciar a aplicação com o profile de testes (comando maven);
-- aguardar a disponibilidade da aplicação (script bash);
-- enviar o código para análise do Sonar Cloud;
-- verificar a qualidade do código e a cobertura de testes.
-
-No microsserviço de pagamento temos um step a mais que é o service do MongoDB. Embora o uso de bancos de dados do tipo embedded (como o H2) seja amplamente difundido, há uma discussão na comunidade a respeito do assunto: um teste de integração de verdade não deveria usar um banco de dados de verdade?
-
-Note que as versões do Mongo embedded disponíveis no mercado não são oferecidas pela mesma equipe que oferece a versão ofocial do MongoDB. Por esse motivo, prefirimos utilizar um banco de dados real nos testes em vez de um banco embedded. Poderíamos ter feito isso nos outros microsserviços também? Sim, mas como esses já estavam funcionando, por ora, deixamos como estão.
-
-Para análise do código, utilizamos o Sonar Cloud. Essa ferramenta realmente executa os testes, em vez de apenas utilizar os relatórios gerados pelo jacoco. No log do step do Sonar, podemos verificar os testes sendo executados. Sendo assim, removi o step que tinha na fase anterior com o comando "mvn test". A ideia é tornar a pipeline mais enxuta e eficiente.
-
-A análise da qualidade do código é feita com um script bash que pega os dados do Sonar Cloud (utilizando a API Web que ele disponibiliza) e verifica se os valores estão ok.
+Na pipeline, após a análise do Sonar, tem um step para validar da qualidade do código. Essa validação é feita com um script bash que pega os dados do Sonar Cloud (utilizando a API Web que ele disponibiliza) e verifica se os valores estão ok.
 
 O script confere e imprime os dados, item por item, no log da pipeline:
 - coverage analysis (tests errors, testes failures, coverage and line coverage);
@@ -174,70 +156,84 @@ O script confere e imprime os dados, item por item, no log da pipeline:
 - maintainability analysis (code smells and rating);
 - quality gate (status).
 
-O restante da pipeline não mudou muita coisa. Só o build da imagem, que teve o arquivo dockerfile modificado um pouco: antes os dados de conexão com o banco eram definidos no build, passados como variáveis de ambiente; agora essa parte foi removida e os as variáveis são definidas nas task definitions do ECS.
+Abaixo segue a evidência dos testes:
 
-Resumindo: os dados continuam sendo passados como variáveis de ambiente, só que agora o valor das variáveis é definido após o build, não durante. Isso dá mais flexibilidade ao código, já que não precisamos realizar um novo build caso alguma dessas variáveis mude. Além dos dados de conexão com o banco, as URLs dos microsserviços também são variáveis de ambiente definidas após o build. 
+![Tela do Sonar Cloud](assets/tela-sonar.png)
 
-## 5. Instrução para rodar a aplicação
+### 2.10 Pipeline
 
-Primeiro, é necessário verificar se os bancos de dados estão ativos e, depois, realizar o deploy dos microsserviços.
+"CI/CD da aplicação."
 
-Sugestão de ordem para execução das APIs:
+A pipeline segue o padrão dos projetos anteriores: ela valida a qualidade do código (conforme descrito no item anterior) e, se a qualidade estiver ok, faz o build da imagem docker, faz o push no ECR e o deploy no ECS. Se der qualquer erro, a pipeline é interrompida.
 
-- Cadastrar cliente
-- Buscar cliente pelo CPF
-- Cadastrar produtos
-- Editar produto
-- Buscar produtos por categoria
-- Remover produtos (não remova todos, deixe pelo menos 1)
-- Fazer checkout
-- Consultar o status do pagamento
-- Mock da notificação do Mercado Pago \*
-- Atualizar o status do pedido
-- Listar pedidos
+Links para o job completo da pipeline:
+- Microsserviço de vídeo: https://github.com/efrancodelima/f5-processamento/actions/runs/14322269037/job/40141338166
+- Microsserviço de notificação: https://github.com/efrancodelima/f5-notificacao/actions/runs/14320065155/job/40135129961
+- Lambda de sucesso: https://github.com/efrancodelima/f5-lambda-sucesso/actions/runs/14020601602/job/39252034654
+- Lambda de falha:  https://github.com/efrancodelima/f5-lambda-falha/actions/runs/14020589569/job/39252008176
 
-O status do pedido muda em uma ordem definida: recebido, em preparação, pronto, finalizado. Mas ele não avança se o pedido não tiver o pagamento aprovado, então é necessário realizar o mock da notificação do Mercado Pago antes de atualizar o status do pedido.
+## 3 Banco de dados
 
-Exemplo de mock para a notificação do Mercado Pago usando o curl (você pode usar o Postman também, se preferir).
+O banco de dados escolhido para a aplicação foi o Aurora, um banco de dados relacional da AWS.
 
+### 3.1 Modelo lógico
+
+O diagrama abaixo foi feito usando a ferramenta Quick Database Diagrams. O sinal de interrogação nos tipos dos campos indicam que o campo pode ser nulo. As chaves indicam chave primária (maior) e chave única (menor). A chave estrangeira é indicada pelo relacionamento.
+
+O modelo construído visa armazenar somente as informações necessárias para a proposta atual. Conforme o sistema for crescendo, talvez seja interessante guardar mais dados do usuário, ter uma entidade só para o vídeo, outra para pagamento, outra para o histórico do processamento (guardando o registro de cada mudança de status), etc. Mas, no momento, o modelo porposto atende o que foi pedido.
+
+![Modelo lógico](assets/erd.png)
+
+### 3.2 Script SQL
+
+O script SQL do esquema do banco de dados segue abaixo:
+
+```SQL
+CREATE TABLE usuario (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE processamento (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome_video VARCHAR(255) NOT NULL,
+    usuario_id BIGINT NOT NULL,
+    job_id VARCHAR(255),
+    status ENUM('RECEBIDO', 'PROCESSANDO', 'CONCLUIDO', 'ERRO') NOT NULL,
+    mensagem_erro VARCHAR(400),
+    link_download VARCHAR(400),
+    timestamp_inicio DATETIME NOT NULL,
+    timestamp_conclusao DATETIME,
+    CONSTRAINT fk_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
 ```
-curl -X PUT <URL>/api/v2/pedidos/webhook/ \
--H "Content-Type: application/json" \
--d '{
-"id": 1,
-"date_created": "2024-09-30T11:26:38.000Z",
-"date_approved": "2024-09-30T11:26:38.000Z",
-"date_last_updated": "2024-09-30T11:26:38.000Z",
-"money_release_date": "2017-09-30T11:22:14.000Z",
-"payment_method_id": "Pix",
-"payment_type_id": "credit_card",
-"status": "approved",
-"status_detail": "accredited",
-"currency_id": "BRL",
-"description": "Pago Pizza",
-"collector_id": 2,
-"payer": {
-  "id": 123,
-  "email": "test_user_80507629@testuser.com",
-  "identification": {
-	"type": "CPF",
-	"number": 19119119100
-  },
-  "type": "customer"
-},
-"metadata": {},
-"additional_info": {},
-"external_reference": "MP0001",
-"transaction_amount": 250,
-"transaction_amount_refunded": 50,
-"coupon_amount": 15,
-"transaction_details": {
-  "net_received_amount": 250,
-  "total_paid_amount": 250,
-  "overpaid_amount": 0,
-  "installment_amount": 250
-},
-"installments": 1,
-"card": {}
-}'
-```
+
+## 4 Arquitetura do sistema
+
+Abaixo segue o diagrama da arquitetura do sistema e, em seguida, uma breve explanação sobre ele.
+
+![Arquitetura do sistema](assets/arquitetura.png)
+
+A aplicação é dividida em dois microsserviços:
+ - o microsserviço de vídeo, responsável por gerenciar o processamento do vídeo. Ele apenas gerencia o processamento, mas não processa nada (quem faz isso é o Media Convert);
+ - e o microsserviço de notificação, responsável por notificar o usuário quando o vídeo termina de processar. Ele usa o SendGrid como provedor para envio de e-mails.
+
+A aplicação roda em uma rede privada, não sendo acessível pela internet sem passar pelo API Gateway. O API Gateway expõe apenas os endpoints que podem ser consumidos pelo cliente e oculta/bloqueia os webhooks que são usados pelas lambdas.
+
+O cliente (que pode ser o front end) envia a requisição para a aplicação. A aplicação responde ao cliente com um status code 204 (No Content) assim que recebe a requisição completa (contendo a lista de vídeos).
+
+Após isso, cada vídeo da requisição continua em uma thread separada. Cada thread salva o vídeo recebido em um bucket do S3 e cria o job no Media Convert. A aplicação vai atualizando a situação do vídeo no database conforme os eventos vão ocorrendo: recebido, em processamento, concluído ou com erro.
+
+Quando o Media Convert termina o seu trabalho, o Event Bridge aciona a lambda de sucesso ou falha, conforme o caso. Se o status do job muda para concluído, um evento é acionado, se muda para erro, é outro evento e outra lambda.
+
+A lambda de sucesso irá acessar o S3 para ler e gravar dados, pois é ela quem compacta as imagens em um arquivo zip e apaga os arquivos que não serão mais necessários (o vídeo e as imagens avulsas fora do zip). No final ela chama um webhook da aplicação para dar continuidade.
+
+A aplicação irá então gerar o link presigned e enviar um e-mail para o usuário com o link para download das imagens compactadas. Esse link presigned é um link com prazo de validade gerado pela AWS que permite compartilhar arquivos do S3 com outras pessoas.
+
+A lambda de falha aciona o webhook da aplicação (sempre passando pelo load balancer) para comunicar a falha. A aplicação registra o motivo da falha no database e envia um e-mail informando o usuário.
+
+Um ponto importante no trabalho das lambdas é que a comunicação delas com a aplicação é assíncrona. Considerando que as lambdas são cobradas por tempo de execução, a aplicação responde com um 204 assim que o webhook é acionado.
+
+Outro ponto importante é que a tarefa de compactar as imagens está sendo feita fora da nossa aplicação. 
+Compactar imagens é um trabalho que pode consumir muita CPU e memória e, dependendo do caso, isso poderia escalar demais a nossa aplicação, aumentando os custos ou até mesmo causando indisponibilidade (caso o máximo de tasks seja atingido). A lambda possui escalabilidade automática (gerenciada pela AWS), então é um ponto a menos para nos preocuparmos.
