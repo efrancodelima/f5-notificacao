@@ -23,11 +23,10 @@ Link do vídeo com a apresentação do projeto:
   - [Autenticação](#23-autenticação)
   - [Persistência dos dados](#24-persistência-dos-dados)
   - [Notificações](#25-notificações)
-  - [Balanceamento de carga](#26-balanceamento-de-carga)
-  - [Escalabilidade](#27-escalabilidade)
-  - [Repositórios](#28-repositórios)
-  - [Qualidade do software](#29-qualidade-do-software)
-  - [Pipeline](#210-pipeline)
+  - [Balanceamento de carga e escalabilidade](#26-balanceamento-de-carga-e-escalabilidade)
+  - [Repositórios](#27-repositórios)
+  - [Qualidade do software](#28-qualidade-do-software)
+  - [Pipeline](#29-pipeline)
 - [Banco de dados](#3-banco-de-dados)
   - [Modelo lógico](#31-modelo-lógico)
   - [Script SQL](#32-script-sql)
@@ -121,27 +120,28 @@ Quando o usuário envia um vídeo para processar, ele recebe uma resposta 204 as
 
 Quando o vídeo termina de processar, um email é enviado para o usuário notificando a finalização com sucesso ou falha, conforme o caso. Se for sucesso, o link para download do arquivo zip contendo as imagens vai junto no e-mail. Se houver falha, o motivo da falha é informado no e-mail (pode ser um tipo de arquivo não compatível com o serviço, por exemplo).
 
-### 2.6 Balanceamento de carga
+### 2.6 Balanceamento de carga e escalabilidade
 
 "Em caso de picos o sistema não deve perder uma requisição."
-
-O sistema roda no Elastic Container Service, um orquestrador de containeres próprio da AWS, e possui um load balancer associado. Os services do ECS possuem um número mínimo e máximo de tasks, o que garante a escalabilidade do sistema. Naturalmente, esses números devem ser ajustados e redimensionados conforme a demanda da aplicação.
-
-Além disso, um ponto importante é que o processamento do vídeo é feito pelo Media Convert da AWS. Esse processamento demanda bastante CPU e memória, então terceirizamos essa tarefa para não sobrecarregar a aplicação. A aplicação ficou responsável apenas pelas tarefas mais simples: receber o vídeo, salvá-lo no bucket S3, criar o job no Media Convert, gerar o link presigned quando o processo terminar, entre outras coisas.
-
-### 2.7 Escalabilidade
-
 "O sistema deve estar em uma arquitetura que o permita ser escalado."
 
-Ok, o sistema roda no Elastic Container Service e utiliza o banco de dados Aurora. Ambos pertencem ao ecossistema da AWS e ambos são escaláveis. No caso do banco de dados, a escalabilidade é automática, gerenciada pela própria AWS. No caso do ECS, podemos configurar o número mínimo e máximo de tasks, bem como as regras de escalabilidade.
+O balanceamento de carga é garantido pelo Network Load Balancer.
 
-### 2.8 Repositórios
+Os microsserviços rodam no Elastic Container Service, um orquestrador de containeres próprio da AWS. Os services do ECS possuem um número mínimo e máximo de tasks, o que garante a escalabilidade. Naturalmente, esses números devem ser ajustados e redimensionados conforme a demanda da aplicação.
+
+Além dos microsserviços, temos o banco de dados Aurora, as lambdas e o Media Convert. Todos são escaláveis, mas nestes casos a escalabilidade é gerenciada pela própria AWS, o que facilita um pouco as coisas para a equipe de desenvolvimento e suporte.
+
+Um ponto importante é que o processamento do vídeo é feito pelo Media Convert e a compactação das imagens é feita por uma lambda. Esses pontos são críticos, pois são os que mais demandam recursos (CPU e memória), então terceirizamos essa tarefa para não sobrecarregar a aplicação.
+
+A aplicação ficou responsável apenas pelas tarefas mais simples: receber o vídeo, salvá-lo no bucket S3, criar o job no Media Convert, gerar o link presigned quando o processo terminar, entre outras coisas.
+
+### 2.7 Repositórios
 
 "O projeto deve ser versionado no Github."
 
 Ok, os links para os repositórios se encontram no início deste documento. Os repositórios têm a branch main protegida e só aceitam merge por meio de pull request.
 
-### 2.9 Qualidade do software
+### 2.8 Qualidade do software
 
 "O projeto deve ter testes que garantam a sua qualidade."
 
@@ -160,7 +160,7 @@ Abaixo segue a evidência dos testes:
 
 ![Tela do Sonar Cloud](assets/tela-sonar.png)
 
-### 2.10 Pipeline
+### 2.9 Pipeline
 
 "CI/CD da aplicação."
 
