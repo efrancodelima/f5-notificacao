@@ -178,9 +178,11 @@ O banco de dados escolhido para a aplicação foi o Aurora, um banco de dados re
 
 ### 3.1 Modelo lógico
 
-![Modelo lógico](assets/erd.png)
+O diagrama abaixo foi feito usando a ferramenta Quick Database Diagrams. O sinal de interrogação nos tipos dos campos indicam que o campo pode ser nulo. As chaves indicam chave primária (maior) e chave única (menor). A chave estrangeira é indicada pelo relacionamento.
 
-É um modelo que visa armazenar somente as informações necessárias para a proposta atual. Conforme o sistema for crescendo, talvez seja interessante guardar mais dados do usuário (para fins de cobrança, por exemplo), ter uma entidade só para o vídeo, outra para o histórico do processamento (guardando o registro de cada mudança de status), etc. Mas, no momento, o modelo acima atende o que foi pedido.
+O modelo construído visa armazenar somente as informações necessárias para a proposta atual. Conforme o sistema for crescendo, talvez seja interessante guardar mais dados do usuário, ter uma entidade só para o vídeo, outra para pagamento, outra para o histórico do processamento (guardando o registro de cada mudança de status), etc. Mas, no momento, o modelo porposto atende o que foi pedido.
+
+![Modelo lógico](assets/erd.png)
 
 ### 3.2 Script SQL
 
@@ -214,8 +216,8 @@ Abaixo segue o diagrama da arquitetura do sistema e, em seguida, uma breve expla
 ![Arquitetura do sistema](assets/arquitetura.png)
 
 A aplicação é dividida em dois microsserviços:
-- o microsserviço de vídeo, responsável por gerenciar o processamento do vídeo. Ele apenas gerencia o processamento, mas não processa nada (quem faz isso é o Media Convert);
-- e o microsserviço de notificação, responsável por notificar o usuário quando o vídeo termina de processar. Ele usa o SendGrid como provedor para envio de e-mails.
+ - o microsserviço de vídeo, responsável por gerenciar o processamento do vídeo. Ele apenas gerencia o processamento, mas não processa nada (quem faz isso é o Media Convert);
+ - e o microsserviço de notificação, responsável por notificar o usuário quando o vídeo termina de processar. Ele usa o SendGrid como provedor para envio de e-mails.
 
 A aplicação roda em uma rede privada, não sendo acessível pela internet sem passar pelo API Gateway. O API Gateway expõe apenas os endpoints que podem ser consumidos pelo cliente e oculta/bloqueia os webhooks que são usados pelas lambdas.
 
